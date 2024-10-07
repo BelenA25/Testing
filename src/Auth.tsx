@@ -23,6 +23,7 @@ const Register = () => {
 
   return (
     <form onSubmit={handleRegister}>
+        <p>Helllo</p>
       <input
         type="email"
         placeholder="Correo electrónico"
