@@ -1,37 +1,46 @@
-import { useState } from 'react';
-import firebase from '../firebaseConfig';
+import { useState } from "react";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import firebase from './../firebaseConfig'; // Asegúrate de que esto apunte a tu archivo de configuración
 
-const Auth = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const auth = getAuth(firebase);
 
-  const handleLogin = async () => {
+const Register = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-      console.log('User logged in:', userCredential.user);
-    } catch (error) {
-      console.error('Error logging in:', error);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log("Usuario registrado: ", userCredential.user);
+      // Opcional: Redirigir a otra página o mostrar mensaje de éxito
+    } catch (error: any) {
+      setError(error.message);
+      console.error("Error al registrar el usuario: ", error.message);
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <form onSubmit={handleRegister}>
       <input
         type="email"
-        placeholder="Email"
+        placeholder="Correo electrónico"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        required
       />
       <input
         type="password"
-        placeholder="Password"
+        placeholder="Contraseña"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        required
       />
-      <button onClick={handleLogin}>Login</button>
-    </div>
+      <button type="submit">Registrar</button>
+      {error && <p style={{ color: 'red' }}>{error}</p>} {/* Muestra mensaje de error */}
+    </form>
   );
 };
 
-export default Auth;
+export default Register;
